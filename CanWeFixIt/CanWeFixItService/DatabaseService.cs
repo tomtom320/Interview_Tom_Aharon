@@ -9,7 +9,7 @@ namespace CanWeFixItService
     {
         // See SQLite In-Memory example:
         // https://github.com/dotnet/docs/blob/main/samples/snippets/standard/data/sqlite/InMemorySample/Program.cs
-        
+
         // Using a name and a shared cache allows multiple connections to access the same
         // in-memory database
         const string connectionString = "Data Source=DatabaseService;Mode=Memory;Cache=Shared";
@@ -22,15 +22,31 @@ namespace CanWeFixItService
             _connection = new SqliteConnection(connectionString);
             _connection.Open();
         }
-        
-        public IEnumerable<Instrument> Instruments()
+
+        public async Task<IEnumerable<Instrument>> Instruments()
         {
-            return _connection.QueryAsync<Instrument>("SQL GOES HERE");
+            return await _connection.QueryAsync<Instrument>(
+                @"SELECT Id, Sedol, Name, Active 
+                            FROM 
+                                instrument WHERE Active = 1");
         }
 
         public async Task<IEnumerable<MarketData>> MarketData()
         {
-            return await _connection.QueryAsync<MarketData>("SELECT Id, DataValue FROM MarketData WHERE Active = 0");
+            return await _connection.QueryAsync<MarketData>(
+                @"SELECT MarketData.id, DataValue, MarketData.Sedol, MarketData.Active, instrument.id as InstrumentId 
+                            FROM MarketData Inner Join instrument 
+                                    ON MarketData.sedol = instrument.sedol 
+                                            WHERE MarketData.Active = 1");
+        }
+
+        public async Task<IEnumerable<MarketValuation>> MarketValidations()
+        {
+            return await _connection.QueryAsync<MarketValuation>(
+                @"SELECT 'DataValueTotal' as Name , SUM(datavalue) as Total  
+                    FROM MarketData 
+                        Group By Active 
+                            HAVING Active = 1");
         }
 
         /// <summary>
@@ -45,7 +61,7 @@ namespace CanWeFixItService
                     id     int,
                     sedol  text,
                     name   text,
-                    active int
+                    active bit
                 );
                 INSERT INTO instrument
                 VALUES (1, 'Sedol1', 'Name1', 0),
@@ -59,14 +75,14 @@ namespace CanWeFixItService
                        (9, 'Sedol9', 'Name9', 0)";
 
             _connection.Execute(createInstruments);
-            
+
             const string createMarketData = @"
                 CREATE TABLE marketdata
                 (
                     id        int,
                     datavalue int,
                     sedol     text,
-                    active    int
+                    active    bit
                 );
                 INSERT INTO marketdata
                 VALUES (1, 1111, 'Sedol1', 0),
