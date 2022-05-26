@@ -32,7 +32,7 @@ namespace CanWeFixItService.Test
         }
 
         [TestMethod]
-        public async Task GetActiveInstruments_WhenGet_ShouldReturn2ResultsAsync()
+        public async Task GetActiveInstruments_WhenGetActiveInstruments_ShouldReturn2Results()
         {
             // arrange
 
