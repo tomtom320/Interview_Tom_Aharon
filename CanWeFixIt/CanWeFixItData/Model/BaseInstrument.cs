@@ -1,10 +1,9 @@
-﻿namespace CanWeFixItService
+﻿namespace CanWeFixItData.Model
 {
-    public class Instrument
+    public class BaseInstrument
     {
         public int Id { get; set; }
         public string Sedol { get; set; }
-        public string Name { get; set; }
         public bool Active { get; set; }
     }
 }

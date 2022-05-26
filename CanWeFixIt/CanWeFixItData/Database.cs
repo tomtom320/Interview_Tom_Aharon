@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using CanWeFixItData.Model;
 using Dapper;
 using Microsoft.Data.Sqlite;
 
-namespace CanWeFixItService
+namespace CanWeFixItData
 {
-    public class DatabaseService : IDatabaseService
+    public class Database : IDatabase
     {
         // See SQLite In-Memory example:
         // https://github.com/dotnet/docs/blob/main/samples/snippets/standard/data/sqlite/InMemorySample/Program.cs
@@ -15,7 +16,7 @@ namespace CanWeFixItService
         const string connectionString = "Data Source=DatabaseService;Mode=Memory;Cache=Shared";
         private SqliteConnection _connection;
 
-        public DatabaseService()
+        public Database()
         {
             // The in-memory database only persists while a connection is open to it. To manage
             // its lifetime, keep one open connection around for as long as you need it.
@@ -31,9 +32,9 @@ namespace CanWeFixItService
                                 instrument WHERE Active = 1");
         }
 
-        public async Task<IEnumerable<MarketData>> MarketData()
+        public async Task<IEnumerable<Market>> MarketData()
         {
-            return await _connection.QueryAsync<MarketData>(
+            return await _connection.QueryAsync<Market>(
                 @"SELECT MarketData.id, DataValue, MarketData.Sedol, MarketData.Active, instrument.id as InstrumentId 
                             FROM MarketData Inner Join instrument 
                                     ON MarketData.sedol = instrument.sedol 

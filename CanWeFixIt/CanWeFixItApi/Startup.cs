@@ -1,4 +1,5 @@
 using AutoMapper;
+using CanWeFixItData;
 using CanWeFixItService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,7 +36,9 @@ namespace CanWeFixItApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CanWeFixItApi", Version = "v1" });
             });
-            services.AddSingleton<IDatabaseService, DatabaseService>();
+
+            services.AddSingleton<IDatabase, Database>();
+            services.AddSingleton<IInstrumentService, InstrumentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +52,7 @@ namespace CanWeFixItApi
             }
 
             // Populate in-memory database with data
-            var database = app.ApplicationServices.GetService(typeof(IDatabaseService)) as IDatabaseService;
+            var database = app.ApplicationServices.GetService(typeof(IDatabase)) as IDatabase;
             database?.SetupDatabase();
             
             app.UseHttpsRedirection();

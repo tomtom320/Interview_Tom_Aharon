@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using CanWeFixItApi.Model;
+using CanWeFixItData.Model;
 using CanWeFixItService;
 
 namespace CanWeFixItApi
@@ -7,7 +9,8 @@ namespace CanWeFixItApi
     {
         public ApiProfile()
         {
-            CreateMap<MarketData, MarketDataDto>();
+            CreateMap<Instrument, InstrumentDto>();
+            //CreateMap<Market, MarketDto>();
         }
     }
 }

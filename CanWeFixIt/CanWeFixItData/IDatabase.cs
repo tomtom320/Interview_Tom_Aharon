@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using CanWeFixItData.Model;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CanWeFixItService
+namespace CanWeFixItData
 {
-    public interface IDatabaseService
+    public interface IDatabase
     {
         Task<IEnumerable<Instrument>> Instruments();
-        Task<IEnumerable<MarketData>> MarketData();
+        Task<IEnumerable<Market>> MarketData();
         Task<IEnumerable<MarketValuation>> MarketValidations();
         void SetupDatabase();
     }
